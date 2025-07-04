@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"BlogManagment/internal/models"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -33,8 +34,15 @@ func NewDatabaseConfig() *DatabaseConfig {
 
 // Connect establishes a database connection
 func (c *DatabaseConfig) Connect() (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
-		c.Host, c.User, c.Password, c.DBName, c.Port)
+	// Prefer DATABASE_URL if set
+	databaseURL := os.Getenv("DATABASE_URL")
+	var dsn string
+	if databaseURL != "" {
+		dsn = databaseURL
+	} else {
+		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
+			c.Host, c.User, c.Password, c.DBName, c.Port)
+	}
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
@@ -58,4 +66,4 @@ func getEnv(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
-} 
+}

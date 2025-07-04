@@ -1,0 +1,228 @@
+basePath: /api
+definitions:
+  models.BlogCreateRequest:
+    description: Request model for creating a new blog post
+    properties:
+      body:
+        example: This is the main content of my blog post...
+        minLength: 1
+        type: string
+      description:
+        example: This is a brief description of my blog post
+        maxLength: 1000
+        type: string
+      title:
+        example: My First Blog Post
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - body
+    - title
+    type: object
+  models.BlogUpdateRequest:
+    description: Request model for updating an existing blog post
+    properties:
+      body:
+        example: Updated blog post content...
+        minLength: 1
+        type: string
+      description:
+        example: Updated description
+        maxLength: 1000
+        type: string
+      title:
+        example: Updated Blog Post Title
+        maxLength: 255
+        minLength: 1
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: A comprehensive blog management system with CRUD operations
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Blog Management API
+  version: "1.0"
+paths:
+  /blog-post:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all blog posts from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Blog posts retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all blog posts
+      tags:
+      - blog
+    post:
+      consumes:
+      - application/json
+      description: Create a new blog post with title, description, and body
+      parameters:
+      - description: Blog post data
+        in: body
+        name: blog
+        required: true
+        schema:
+          $ref: '#/definitions/models.BlogCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Blog post created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request - validation error
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new blog post
+      tags:
+      - blog
+  /blog-post/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a blog post by its unique identifier
+      parameters:
+      - description: Blog post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Blog post deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request - invalid ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Blog post not found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a blog post
+      tags:
+      - blog
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific blog post by its unique identifier
+      parameters:
+      - description: Blog post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Blog post retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request - invalid ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Blog post not found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a blog post by ID
+      tags:
+      - blog
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing blog post by ID with partial data
+      parameters:
+      - description: Blog post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Blog post update data
+        in: body
+        name: blog
+        required: true
+        schema:
+          $ref: '#/definitions/models.BlogUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Blog post updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request - validation error
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Blog post not found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update a blog post
+      tags:
+      - blog
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
